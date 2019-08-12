@@ -1,0 +1,39 @@
+version: "3"
+services:
+  db:
+    image: mysql:5.7
+    volumes:
+      - ./db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+      MYSQL_DATABASE: wordpress
+    ports:
+      - "3306:3306"
+  web:
+    build: ./web/
+    ports:
+      - "80:80"
+    volumes:
+      - ./www_data:/var/www/html
+    links:
+      - php
+  php:
+    build: ./php/
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./www_data:/var/www/html
+  
+  ftp:
+    build:
+      context: ./ftp 
+      args:
+        USER: ftp_user
+        PASS: ftp_password
+    ports:
+      - "20:20"
+      - "21:21"
+    volumes:
+      - ./www_data:/var/www/html
